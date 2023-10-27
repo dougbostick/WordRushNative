@@ -42,7 +42,7 @@ export default function App() {
       <View style={styles.row}>
         <View>
           <Text>Score</Text>
-          <View style={correct ? styles.score : styles.box}>
+          <View>
             <Text>{score}</Text>
           </View>
         </View>
@@ -50,18 +50,31 @@ export default function App() {
     </View>
   );
 }
-
+//style={correct ? styles.score : styles.box}
 const styles = StyleSheet.create({
   container: {
-    // text-align: 'center',
-    // height: 100,
+    backgroundColor: 'red',
+    // textAlign: 'center',
     flex: 1,
-    border: '1px solid black',
-    color: 'black',
+    // flexWrap: 'wrap',
+    color: 'red',
     marginTop: 0,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    // borderColor: 'blue',
+    // borderWidth: 10,
+    // borderStyle: 'solid',
+    // borderRadius: 5,
+  },
+  box: {
+    color: 'red',
+    width: 50,
+    height: 50,
+    borderColor: 'black',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderRadius: 5,
   },
 });
