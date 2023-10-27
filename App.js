@@ -1,6 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  FlatList,
+} from 'react-native';
 import { useState } from 'react';
+import axios from 'axios';
 
 export default function App() {
   const [timer, setTimer] = useState(30);
@@ -17,22 +25,67 @@ export default function App() {
   );
   const [repeatedWord, setRepeatedWord] = useState('');
 
+  const handleGuess = async (e) => {
+    e.preventDefault();
+    //check to see if word has been guessed already
+    if (guess.length === 0) return;
+    if (guessList[guess]) {
+      setMessage('Already guessed');
+      setRepeatedWord(guess);
+      setTimeout(() => setRepeatedWord(''), 500);
+      return;
+    }
+    //check first letter of guess is correct
+    if (guess[0].toUpperCase() !== firstLetter) {
+      setMessage('Incorrect first letter');
+      return;
+    }
+    //check to see if guess if proper length
+    if (guess.length !== wordLength) {
+      setMessage('Incorrect word length');
+      return;
+    }
+    try {
+      //check to see if word exists
+      await axios
+        .get(`https://api.dictionaryapi.dev/api/v2/entries/en/${guess}`)
+        .then((res) => {
+          if (res.data) {
+            //add guess to guessList and increment score
+            setGuessList({ ...guessList, [guess]: true });
+            setScore(score + 1);
+            setMessage('');
+            sound();
+            setCorrect(true);
+            setTimeout(() => setCorrect(false), 500);
+            setGuess('');
+          }
+        });
+    } catch (err) {
+      //if word doesn't exist, the api call fails
+      setMessage('Not a word');
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.row}>
-        <View>
+      <View style={styles.logo}>
+        <Text>LOGO</Text>
+      </View>
+      <View style={styles.middleRow}>
+        <View style={styles.info}>
           <Text>First Letter</Text>
           <View style={styles.box}>
             <Text>{firstLetter}</Text>
           </View>
         </View>
-        <View>
+        <View style={styles.info}>
           <Text>Timer</Text>
           <View style={styles.box}>
             <Text>{timer}</Text>
           </View>
         </View>
-        <View>
+        <View style={styles.info}>
           <Text>Word Length</Text>
           <View style={styles.box}>
             <Text>{wordLength}</Text>
@@ -40,12 +93,31 @@ export default function App() {
         </View>
       </View>
       <View style={styles.row}>
-        <View>
+        <View style={styles.info}>
           <Text>Score</Text>
           <View>
             <Text>{score}</Text>
           </View>
         </View>
+      </View>
+      <View style={styles.row}>
+        <TextInput
+          style={styles.input}
+          value={guess}
+          onChangeText={(e) => setGuess(e)}
+          placeholder="enter a guess..."
+        />
+        <Button style={styles.button} title="+" onPress={() => handleGuess} />
+      </View>
+      <View style={styles.row}>
+        <FlatList
+          data={guessList}
+          renderItem={(item) => (
+            <View>
+              <Text>{item}</Text>
+            </View>
+          )}
+        />
       </View>
     </View>
   );
@@ -54,27 +126,75 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'red',
-    // textAlign: 'center',
     flex: 1,
-    // flexWrap: 'wrap',
     color: 'red',
     marginTop: 0,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    // borderColor: 'blue',
-    // borderWidth: 10,
-    // borderStyle: 'solid',
-    // borderRadius: 5,
+  },
+
+  logo: {
+    // flex: 1,
+    height: '15%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  row: {
+    display: 'flex',
+    // flex: 1,
+    height: '10%',
+    width: '80%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    borderColor: 'black',
+    borderWidth: 2,
+    borderStyle: 'solid',
+    borderRadius: 5,
+  },
+  middleRow: {
+    display: 'flex',
+    // flex: 3,
+    height: '40%',
+    width: '80%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    borderColor: 'black',
+    borderWidth: 2,
+    borderStyle: 'solid',
+    borderRadius: 5,
   },
   box: {
     color: 'red',
     width: 50,
-    height: 50,
+    height: 60,
     borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: 2,
     borderStyle: 'solid',
     borderRadius: 5,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  info: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  input: {
+    height: 40,
+  },
+  button: {
+    borderColor: 'black',
+    borderWidth: 2,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    height: 50,
   },
 });
