@@ -1,4 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
+import { generateLetter, generateWordLength } from './gameFunctions';
 import {
   StyleSheet,
   Text,
@@ -7,7 +8,7 @@ import {
   Button,
   FlatList,
 } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 export default function App() {
@@ -19,7 +20,8 @@ export default function App() {
   const [wordLength, setWordLength] = useState('???');
   const [firstLetter, setFirstLetter] = useState('???');
   const [guess, setGuess] = useState('');
-  const [guessList, setGuessList] = useState({});
+  // const [guessList, setGuessList] = useState({});
+  const [guessList, setGuessList] = useState([]);
   const [message, setMessage] = useState(
     'Guess words with the correct first letter and length'
   );
@@ -29,7 +31,7 @@ export default function App() {
     e.preventDefault();
     //check to see if word has been guessed already
     if (guess.length === 0) return;
-    if (guessList[guess]) {
+    if (guessList.includes(guess)) {
       setMessage('Already guessed');
       setRepeatedWord(guess);
       setTimeout(() => setRepeatedWord(''), 500);
@@ -52,7 +54,9 @@ export default function App() {
         .then((res) => {
           if (res.data) {
             //add guess to guessList and increment score
-            setGuessList({ ...guessList, [guess]: true });
+            // setGuessList({ ...guessList, [guess]: true });
+            setGuessList([...guessList, guess]);
+            console.log(guessList, guess);
             setScore(score + 1);
             setMessage('');
             sound();
@@ -65,6 +69,44 @@ export default function App() {
       //if word doesn't exist, the api call fails
       setMessage('Not a word');
     }
+  };
+
+  const endGame = () => {
+    setGameStatus(false);
+    setGuess('');
+    setMessage('Good Game!');
+    clearInterval(intervalId);
+  };
+
+  const countdown = () => {
+    if (timer > 0) {
+      setTimer(timer - 1);
+    } else {
+      endGame();
+    }
+  };
+
+  const test = useRef(countdown);
+
+  useEffect(() => {
+    test.current = countdown;
+  }, [timer]);
+
+  const startGame = () => {
+    console.log('start pressed');
+    resetGameParams();
+    setGameStatus(true);
+    setIntervalId(setInterval(() => test.current(), 1000));
+  };
+
+  const resetGameParams = () => {
+    setTimer(30);
+    setScore(0);
+    setGuessList({});
+    setGuess('');
+    setMessage('');
+    setFirstLetter(generateLetter());
+    setWordLength(generateWordLength());
   };
 
   return (
@@ -99,6 +141,9 @@ export default function App() {
             <Text>{score}</Text>
           </View>
         </View>
+        <View>
+          <Button title="start" onPress={startGame} />
+        </View>
       </View>
       <View style={styles.row}>
         <TextInput
@@ -107,12 +152,12 @@ export default function App() {
           onChangeText={(e) => setGuess(e)}
           placeholder="enter a guess..."
         />
-        <Button style={styles.button} title="+" onPress={() => handleGuess} />
+        <Button style={styles.button} title="+" onPress={handleGuess} />
       </View>
       <View style={styles.row}>
         <FlatList
           data={guessList}
-          renderItem={(item) => (
+          renderItem={({ item }) => (
             <View>
               <Text>{item}</Text>
             </View>
