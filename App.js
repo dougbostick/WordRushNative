@@ -29,6 +29,7 @@ export default function App() {
 
   const handleGuess = async (e) => {
     e.preventDefault();
+    console.log(guessList);
     //check to see if word has been guessed already
     if (guess.length === 0) return;
     if (guessList.includes(guess)) {
@@ -102,7 +103,7 @@ export default function App() {
   const resetGameParams = () => {
     setTimer(30);
     setScore(0);
-    setGuessList({});
+    setGuessList([]);
     setGuess('');
     setMessage('');
     setFirstLetter(generateLetter());
@@ -141,18 +142,24 @@ export default function App() {
             <Text>{score}</Text>
           </View>
         </View>
-        <View>
-          <Button title="start" onPress={startGame} />
-        </View>
       </View>
       <View style={styles.row}>
-        <TextInput
-          style={styles.input}
-          value={guess}
-          onChangeText={(e) => setGuess(e)}
-          placeholder="enter a guess..."
-        />
-        <Button style={styles.button} title="+" onPress={handleGuess} />
+        {!gameStatus && (
+          <View>
+            <Button title="start" onPress={startGame} />
+          </View>
+        )}
+        {gameStatus && (
+          <TextInput
+            style={styles.input}
+            value={guess}
+            onChangeText={(e) => setGuess(e)}
+            placeholder="enter a guess..."
+          />
+        )}
+        {gameStatus && (
+          <Button style={styles.button} title="+" onPress={handleGuess} />
+        )}
       </View>
       <View style={styles.row}>
         <FlatList
