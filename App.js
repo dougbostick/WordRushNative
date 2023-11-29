@@ -116,23 +116,28 @@ export default function App() {
         <Text>LOGO</Text>
       </View>
       <View style={styles.middleRow}>
-        <View style={styles.info}>
-          <Text>First Letter</Text>
-          <View style={styles.box}>
-            <Text>{firstLetter}</Text>
+        <View style={styles.topHalf}>
+          <View style={styles.info}>
+            <Text>First Letter</Text>
+            <View style={styles.box}>
+              <Text>{firstLetter}</Text>
+            </View>
+          </View>
+          <View style={styles.info}>
+            <Text>Timer</Text>
+            <View style={styles.box}>
+              <Text>{timer}</Text>
+            </View>
+          </View>
+          <View style={styles.info}>
+            <Text>Word Length</Text>
+            <View style={styles.box}>
+              <Text>{wordLength}</Text>
+            </View>
           </View>
         </View>
-        <View style={styles.info}>
-          <Text>Timer</Text>
-          <View style={styles.box}>
-            <Text>{timer}</Text>
-          </View>
-        </View>
-        <View style={styles.info}>
-          <Text>Word Length</Text>
-          <View style={styles.box}>
-            <Text>{wordLength}</Text>
-          </View>
+        <View style={styles.bottomHalf}>
+          <Text style={styles.text}>{message}</Text>
         </View>
       </View>
       <View style={styles.row}>
@@ -161,7 +166,7 @@ export default function App() {
           <Button style={styles.button} title="+" onPress={handleGuess} />
         )}
       </View>
-      <View style={styles.row}>
+      <View style={styles.bottomRow}>
         <FlatList
           data={guessList}
           renderItem={({ item }) => (
@@ -176,6 +181,9 @@ export default function App() {
 }
 //style={correct ? styles.score : styles.box}
 const styles = StyleSheet.create({
+  text: {
+    textAlign: 'center',
+  },
   container: {
     backgroundColor: 'red',
     flex: 1,
@@ -207,10 +215,10 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderRadius: 5,
   },
-  middleRow: {
+  bottomRow: {
     display: 'flex',
-    // flex: 3,
-    height: '40%',
+    // flex: 1,
+    height: '20%',
     width: '80%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -219,6 +227,33 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderStyle: 'solid',
     borderRadius: 5,
+  },
+  middleRow: {
+    display: 'flex',
+    // flex: 3,
+    height: '30%',
+    width: '80%',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    borderColor: 'black',
+    borderWidth: 2,
+    borderStyle: 'solid',
+    borderRadius: 5,
+  },
+  topHalf: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    height: '60%',
+  },
+  bottomHalf: {
+    width: '75%',
+    height: '40%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   box: {
     color: 'red',
