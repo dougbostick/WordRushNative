@@ -29,7 +29,7 @@ export default function App() {
 
   const handleGuess = async (e) => {
     e.preventDefault();
-    console.log(guessList);
+    // console.log(guessList);
     //check to see if word has been guessed already
     if (guess.length === 0) return;
     if (guessList.includes(guess)) {
@@ -68,6 +68,7 @@ export default function App() {
         });
     } catch (err) {
       //if word doesn't exist, the api call fails
+      console.log('error');
       setMessage('Not a word');
     }
   };
@@ -94,7 +95,6 @@ export default function App() {
   }, [timer]);
 
   const startGame = () => {
-    console.log('start pressed');
     resetGameParams();
     setGameStatus(true);
     setIntervalId(setInterval(() => test.current(), 1000));
@@ -168,10 +168,11 @@ export default function App() {
       </View>
       <View style={styles.bottomRow}>
         <FlatList
+          style={styles.guessDiv}
           data={guessList}
           renderItem={({ item }) => (
             <View>
-              <Text>{item}</Text>
+              <Text style={styles.guess}>{item}</Text>
             </View>
           )}
         />
@@ -283,5 +284,21 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderRadius: 5,
     height: 50,
+  },
+  guessDiv: {
+    borderColor: 'black',
+    borderWidth: 2,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    display: 'flex',
+    flexDirection: 'row',
+    // justifyContent: 'center',
+    alignContent: 'center',
+  },
+  guess: {
+    borderColor: 'black',
+    borderWidth: 2,
+    borderStyle: 'solid',
+    borderRadius: 5,
   },
 });
