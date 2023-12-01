@@ -7,9 +7,11 @@ import {
   TextInput,
   Button,
   FlatList,
+  Image,
 } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import logo from './assets/wordrushlogo.png';
 
 export default function App() {
   const [timer, setTimer] = useState(30);
@@ -54,6 +56,7 @@ export default function App() {
         .get(`https://api.dictionaryapi.dev/api/v2/entries/en/${guess}`)
         .then((res) => {
           if (res.data) {
+            console.log(res.data);
             //add guess to guessList and increment score
             // setGuessList({ ...guessList, [guess]: true });
             setGuessList([...guessList, guess]);
@@ -113,7 +116,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <View style={styles.logo}>
-        <Text>LOGO</Text>
+        <Image source={logo} />
       </View>
       <View style={styles.middleRow}>
         <View style={styles.topHalf}>
@@ -171,8 +174,8 @@ export default function App() {
           style={styles.guessDiv}
           data={guessList}
           renderItem={({ item }) => (
-            <View>
-              <Text style={styles.guess}>{item}</Text>
+            <View style={styles.guess}>
+              <Text>{item}</Text>
             </View>
           )}
         />
@@ -286,19 +289,27 @@ const styles = StyleSheet.create({
     height: 50,
   },
   guessDiv: {
-    borderColor: 'black',
-    borderWidth: 2,
-    borderStyle: 'solid',
-    borderRadius: 5,
+    // borderColor: 'black',
+    // borderWidth: 2,
+    // borderStyle: 'solid',
+    // borderRadius: 5,
+    height: '100%',
     display: 'flex',
     flexDirection: 'row',
-    // justifyContent: 'center',
-    alignContent: 'center',
+    justifyContent: 'center',
+
+    alignItems: 'center',
   },
   guess: {
     borderColor: 'black',
     borderWidth: 2,
     borderStyle: 'solid',
     borderRadius: 5,
+    alignContent: 'center',
+    color: 'blue',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
